@@ -24,7 +24,7 @@ describe('Misc', () => {
 
         // Mock the fs module
         mockFs({
-            'server/uploaded_files/ShortVideos/filename':clips,
+            'uploaded_files/ShortVideos/filename':clips,
         });
         ffmpegWrapperMock = mock(FfmpegWrapper);
         ffmpegWrapperSpy = instance(ffmpegWrapperMock);
@@ -49,7 +49,7 @@ describe('Misc', () => {
             const mkdirSpy = jest.spyOn(fs, 'mkdirSync');
             await testedClass.setDuration(path);
 
-            const save_path: string = 'server/uploaded_files/Thumbnails/';
+            const save_path: string = 'uploaded_files/Thumbnails/';
             const thumbnailPath: string = `${save_path}${filename.split('.').slice(0, -1).join('.')}`;
 
             await testedClass.create_thumbnail();
@@ -61,7 +61,7 @@ describe('Misc', () => {
 
                 const timeMark = i * (testedClass.getDuration() / 5);
                 const thumbnailName = `screenshot_${i}.png`;
-                const thumbnailPath = `server/uploaded_files/Thumbnails/${filename.split('.').slice(0, -1).join('.')}`;
+                const thumbnailPath = `uploaded_files/Thumbnails/${filename.split('.').slice(0, -1).join('.')}`;
         
                 verify(ffmpegWrapperMock.generateThumbnail(path, thumbnailPath, timeMark, thumbnailName)).once();
             }
@@ -103,7 +103,7 @@ describe('Misc', () => {
 
             await testedClass.create_preview();
     
-            const save_path = 'server/uploaded_files/Preview/';
+            const save_path = 'uploaded_files/Preview/';
             const PreviewPath = `${save_path}${filename.split('.').slice(0, -1).join('.')}`;
             const fps = 0.5;
     
@@ -114,8 +114,7 @@ describe('Misc', () => {
             verify(ffmpegWrapperMock.createPreview(path, PreviewPath, fps)).once();
     
             // Reset the mock for the next tests
-            mkdirSpy.mockRestore();
-            rimraf.sync('server');
+
 
         });
 
@@ -143,7 +142,7 @@ describe('Misc', () => {
     
             for(let i = 0; i < num_clips; i++) {
                 const startTime = i * (testedClass.getDuration() / num_clips);
-                const output_filename = `server/uploaded_files/ShortVideos/${filename.split('.').slice(0, -1).join('.')}/clip_${i}.mp4`;
+                const output_filename = `uploaded_files/ShortVideos/${filename.split('.').slice(0, -1).join('.')}/clip_${i}.mp4`;
     
                 verify(ffmpegWrapperMock.createShortVideoClip(path, startTime, output_filename)).once();
                 
@@ -157,7 +156,7 @@ describe('Misc', () => {
 
         it('should merge short video clips successfully', async () => {
 
-            const tempPath = `server/uploaded_files/ShortVideos/${filename.split('.').slice(0, -1).join('.')}`;
+            const tempPath = `uploaded_files/ShortVideos/${filename.split('.').slice(0, -1).join('.')}`;
             const outputPath = `${tempPath}/output.mp4`;
 
             await testedClass.createShortVideo();
@@ -200,7 +199,7 @@ describe('Misc', () => {
 
             const clips = [];
             for (let i = 0; i < 15; i++) {
-                clips.push(`server/uploaded_files/ShortVideos/filename/clip_${i}.mp4`);
+                clips.push(`uploaded_files/ShortVideos/filename/clip_${i}.mp4`);
             }
             
             when(ffmpegWrapperMock.createShortVideoClip(anyString(), anything(), anyString())).thenResolve();
