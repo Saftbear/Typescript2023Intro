@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Sample Video 1",
+    "thumbnail": "http://example.com/path/to/thumbnail1.png",
+    "path": "/path/to/video1.mp4",
+    "user": "username1"
+  },
+  {
+    "id": 2,
+    "title": "Sample Video 2",
+    "thumbnail": "http://example.com/path/to/thumbnail2.png",
+    "path": "/path/to/video2.mp4",
+    "user": "username2"
+  }
+]
