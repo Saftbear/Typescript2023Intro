@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ProtectedRoute } from './Routes/ProtectedRoute';
 import { Helmet } from 'react-helmet';
 import "./css/upload.css"
+import { useAuth } from './authContext';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -25,6 +26,7 @@ const VideoEdit: React.FC = () => {
     const { videoPath } = useParams<{ videoPath: string }>();
     const [videoDetails, setVideoDetails] = useState(initialVideoDetails); // State variable to store the video details
     const [isLoading, setIsLoading] = useState(true); // set
+    const { user } = useAuth();
 
     const navigate = useNavigate();
 
@@ -40,9 +42,17 @@ const VideoEdit: React.FC = () => {
                       path: videoPath,
                   },
               });
+
+              if (user?.username !== response.data.user.username) {
+                navigate('/Error404');  
+              } else {
+                setVideoDetails(response.data);
+              }
+
+
               setVideoDetails(response.data);
               setIsLoading(false); // set loading state to false after data is fetched
-              console.log(response.data.title)
+              console.log(response.data)
           } catch (error) {
               console.log(error);
           }

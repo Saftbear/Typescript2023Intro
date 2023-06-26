@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, Col, Row } from 'antd';
 import "./css/homepage.css"
 import { EditOutlined } from '@ant-design/icons';
-
+import { useAuth } from './authContext';
 const { Meta } = Card;
 
 const ITEMS_PER_PAGE = 24; // Change this if screen is too big 
@@ -14,6 +14,7 @@ const Homepage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredVideo, setHoveredVideo] = useState<number | null>(null);
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -24,7 +25,6 @@ const Homepage: React.FC = () => {
       }
     }).then((response) => {
       setVideos(response.data);
-   
     });
   }, []);
   
@@ -95,15 +95,20 @@ const Homepage: React.FC = () => {
               
                         >
                             <Meta
-                          title={
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <span className="video-title" style={{ fontSize: '14px' }}>{video.title}</span>
-                              <Link to={`/videoedit/${video.path}`}>
-                                <EditOutlined key="edit" />
-                              </Link>
-                            </div>}
-                          description={<span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
-                        />
+    
+
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span className="video-title" style={{ fontSize: '14px' }}>{video.title}</span>
+                    {video.user === user?.username && 
+                      <Link to={`/videoedit/${video.path}`}>
+                        <EditOutlined key="edit" />
+                      </Link>
+                    }
+                  </div>
+                }
+                description={video.user === user?.username && <span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
+                />
                         </Card>
                     </Col>
                 ))}
