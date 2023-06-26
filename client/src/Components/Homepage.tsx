@@ -5,6 +5,7 @@ import { Card, Col, Row } from 'antd';
 import "./css/homepage.css"
 import { EditOutlined } from '@ant-design/icons';
 import { useAuth } from './authContext';
+import { Helmet } from 'react-helmet';
 const { Meta } = Card;
 
 const ITEMS_PER_PAGE = 24; // Change this if screen is too big 
@@ -48,6 +49,12 @@ const Homepage: React.FC = () => {
 
   const currentVideos = videos.slice(0, currentPage * ITEMS_PER_PAGE);
   return (
+    <div>
+      <Helmet>
+        <title>
+      Homepage
+       </title>
+      </Helmet>
     <div className="site-card-wrapper" style={{ overflowX: 'hidden', overflowY: 'hidden', marginTop: "20px", marginLeft: "20px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
         {[...Array(Math.ceil(currentVideos.length / 4))].map((_, rowIndex) => (
@@ -107,7 +114,7 @@ const Homepage: React.FC = () => {
                     }
                   </div>
                 }
-                description={video.user === user?.username && <span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
+                description={<span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
                 />
                         </Card>
                     </Col>
@@ -115,7 +122,7 @@ const Homepage: React.FC = () => {
             </Row>
         ))}
     </div>
-
+  </div>
 );
 
 }

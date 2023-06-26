@@ -5,6 +5,7 @@ import { useAuth } from './authContext';
 
 import { Form, Input, Checkbox, Button, message } from 'antd';
 import { ProtectedRoute } from './Routes/ProtectedRoute';
+import { Helmet } from 'react-helmet';
 
 const schema = yup.object().shape({
   playlistName: yup.string().required().max(100),
@@ -48,6 +49,11 @@ const CreatePlaylist: React.FC = () => {
   
     return (
         <ProtectedRoute>
+          <Helmet>
+             <title>
+              Create Playlist
+             </title>
+          </Helmet>
       <Form form={form} onFinish={onFinish}>
         <Form.Item
           label="Playlist Name"

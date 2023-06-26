@@ -51,7 +51,7 @@ const Login: React.FC = () => {
 
     return (
         <UnauthenticatedRoute>
-        <>
+
           <Helmet>
             <title>Login</title>
           </Helmet>
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
               </Form.Item>
             </Form>
           </div>
-        </>
+
         </UnauthenticatedRoute>
       );
 };

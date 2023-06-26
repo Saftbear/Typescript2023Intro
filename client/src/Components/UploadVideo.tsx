@@ -4,9 +4,10 @@ import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
 import { ProtectedRoute } from './Routes/ProtectedRoute';
 const { Dragger } = Upload;
-
 const UploadForm: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -60,6 +61,11 @@ const UploadForm: React.FC = () => {
 
   return(
     <ProtectedRoute>
+      <Helmet>
+        <title> 
+        Upload 
+        </title> 
+      </Helmet>
         <div style={{ marginTop: "40px" }}>
         <Dragger {...props_video} maxCount={1} disabled={isUploading}>
         <p className="ant-upload-drag-icon">

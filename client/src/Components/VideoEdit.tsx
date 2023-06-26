@@ -206,6 +206,11 @@ const VideoEdit: React.FC = () => {
   }
   return (
     <ProtectedRoute>
+      <Helmet>
+        <title>
+          Edit Video
+        </title>
+      </Helmet>
     <div>
     <legend>Edit details</legend>
 

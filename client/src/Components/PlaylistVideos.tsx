@@ -4,7 +4,7 @@ import { Link,useParams } from 'react-router-dom';
 import { Card, Col, Row } from 'antd';
 import "./css/homepage.css"
 import { EditOutlined } from '@ant-design/icons';
-
+import { Helmet } from 'react-helmet';
 
 const { Meta } = Card;
 
@@ -48,6 +48,14 @@ const PlaylistVideos: React.FC = () => {
 
   const currentVideos = videos.slice(0, currentPage * ITEMS_PER_PAGE);
   return (
+
+    <div>
+
+
+    <Helmet>
+    <title>Playlist</title>
+  </Helmet>
+
 <div className="site-card-wrapper" style={{ overflowX: 'hidden', overflowY: 'hidden', marginTop: "20px", marginLeft: "20px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
     {[...Array(Math.ceil(currentVideos.length / 4))].map((_, rowIndex) => (
         <Row gutter={8} key={rowIndex} justify="center">
@@ -108,7 +116,7 @@ const PlaylistVideos: React.FC = () => {
         </Row>
     ))}
 </div>
-
+</div>
 );
 
 }

@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { render, waitFor, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Homepage from '../Homepage';
+import { AuthProvider } from '../authContext'; // import the provider
 
 jest.mock('axios');
 
@@ -39,9 +40,12 @@ test('renders content from api', async () => {
 
   render(   
     <BrowserRouter>
-      <Homepage />
+      <AuthProvider>
+        <Homepage />
+      </AuthProvider>
     </BrowserRouter>
   );
+
   await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(1));
 
   await waitFor(() => {

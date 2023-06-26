@@ -8,6 +8,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { Typography } from 'antd';
+import { Helmet } from "react-helmet";
 
 const VideoPlayer: React.FC = () => {
   const { videoPath } = useParams<{ videoPath: string }>();
@@ -192,6 +193,7 @@ useEffect(() => {
 
     return (
     <div>
+      <Helmet><title>Watch Video</title></Helmet>
       <div className="video-container paused" ref={containerRef}>
           <div className="video-controls-container">
           <div className="timeline-container" 
