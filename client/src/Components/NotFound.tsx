@@ -6,7 +6,7 @@ const Error404: React.FC = () => {
     return (
         <div>
 
-<Helmet>
+            <Helmet>
             <title>Login</title>
           </Helmet>
           <h1 style={{marginLeft: "20px"}}> 404 - Not Found </h1>
