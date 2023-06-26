@@ -130,8 +130,6 @@ class Misc implements MiscType{
 
     }    
 
-    
-
 
     // Creating short video
     public async createShortVideo(path?: string, filename?: string): Promise<void> {

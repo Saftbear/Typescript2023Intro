@@ -92,7 +92,7 @@ export const deleteVideo = async function(req: Request, res: Response) {
 }
 export const createVideo = async function(req: Request, res: Response, next: NextFunction) {
   try {
-      const { title, description, thumbnail, isPrivate, playlist } = req.body;
+      const { title, description, thumbnail, playlist } = req.body;
       const user = req.user; 
       if(!user){
           return res.status(401).json({ error: 'Unauthorized' });
@@ -118,7 +118,6 @@ export const createVideo = async function(req: Request, res: Response, next: Nex
       video.title = title;
       video.description = description;
       video.thumbnail = thumbnail;
-      video.isPrivate = isPrivate;
       video.user = user;
       const result = await AppDataSource.manager.save(video);
 

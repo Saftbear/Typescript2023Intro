@@ -49,7 +49,7 @@ export const getVideosInPlaylist = async (req: Request, res: Response) => {
 export const createPlaylists = async (req: Request, res: Response) => {
 
   try {
-    const { playlistName, isPrivate } = req.body;
+    const { playlistName } = req.body;
     const userId = Number(req.headers.userid);
   
   
@@ -65,7 +65,6 @@ export const createPlaylists = async (req: Request, res: Response) => {
     const playlist = new Playlist();
     playlist.name = playlistName;
     playlist.user = user;
-    playlist.private = isPrivate || false; 
     playlist.videos = []; // initially, no videos in the playlist
 
     // Save the playlist in the database

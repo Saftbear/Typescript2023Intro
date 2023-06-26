@@ -30,7 +30,6 @@ export class Video {
     @JoinTable()
     playlists: Playlist[];
 
-    @Column({ default: false }) // default is public
-    isPrivate: boolean;
+
 
 }

@@ -4,7 +4,7 @@ import { User, Video, Playlist } from "../database";
 
 export const AppDataSource = new DataSource({
     type: "sqlite",
-    database: "myDatabase.sqlite",
+    database: "myYoutube.sqlite",
     synchronize: true,
     logging: false,
     entities: [

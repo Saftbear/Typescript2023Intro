@@ -55,8 +55,26 @@ export const getVideos = async (req: Request, res: Response) => {
       user: video.user.username,
     }));
   
-    return res.json(response);
+    return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ error: 'An error occurred while fetching videos' });
   }
 };
+
+export const getVideoDetails = async (req: Request, res: Response) => {
+try {
+  const  filename = req.headers.filename;
+  console.log(filename)
+  const video = await AppDataSource.manager.findOne(Video, { where: { path: filename as string} }) as Video;
+
+  if (!video) {
+    return res.status(404).json({ error: 'Video not found' });
+}
+  console.log(video)
+  return res.status(200).json({response: "ok", video: video});
+} catch (error) {
+  return res.status(500).json({ error: 'An error occurred while fetching video Details' });
+
+}
+
+}

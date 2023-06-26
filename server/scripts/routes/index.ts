@@ -6,9 +6,9 @@ import playlistRoutes from './playlists';
 
 const router = express.Router();
 
-router.use('/auth', authRoutes);
-router.use('/video', videoRoutes);
-router.use('/misc', miscRoutes);
-router.use('/playlists', playlistRoutes);
+router.use("/auth", authRoutes);
+router.use("/video", videoRoutes);
+router.use("/misc", miscRoutes);
+router.use("/playlists", playlistRoutes);
 
 export default router;

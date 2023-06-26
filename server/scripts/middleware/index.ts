@@ -12,6 +12,7 @@ const secretKey:string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlc
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+  console.log(authHeader)
   if (authHeader) {
     const parts = authHeader.split(' ');
     if (parts.length !== 2) {
