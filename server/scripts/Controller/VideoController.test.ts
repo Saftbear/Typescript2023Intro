@@ -69,7 +69,6 @@ jest.mock('../../database/data-source', () => {
           title: 'Test Video',
           description: 'This is a test video',
           thumbnail: 'test.png',
-          isPrivate: false,
           user: { id: 1, username: 'test' },
           playlists: [],
         };
