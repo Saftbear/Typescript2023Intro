@@ -136,7 +136,7 @@ const VideoEdit: React.FC = () => {
         return () => clearInterval(intervalId);
       }, [fileName]);
       
-  const handleVideoFormSubmit = async (values: { title: string; description: string, playlist:string[], isPrivate:boolean }) => {
+  const handleVideoFormSubmit = async (values: { title: string; description: string, playlist:string[] }) => {
 
 
     console.log(values.playlist)
@@ -146,7 +146,6 @@ const VideoEdit: React.FC = () => {
       fileName,
       thumbnail: isCustomThumbnail ? customThumbnail : selectedThumbnail, //
       playlist: values.playlist,
-      isPrivate: values.isPrivate,
     };
 
 

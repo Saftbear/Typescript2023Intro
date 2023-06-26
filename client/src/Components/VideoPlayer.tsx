@@ -6,26 +6,26 @@ import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaCompress, FaExpand } from 
 import { MdPictureInPicture } from 'react-icons/md';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-
+import axios from "axios";
+import { Typography } from 'antd';
 
 const VideoPlayer: React.FC = () => {
-const { videoPath } = useParams<{ videoPath: string }>();
-const src = `http://localhost:3001/uploaded_files/uploads/${videoPath}`;
-
+  const { videoPath } = useParams<{ videoPath: string }>();
+  const src = `http://localhost:3001/uploaded_files/uploads/${videoPath}`;
+  const [video, setVideo] = useState({ title: '', description: ''});
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isPIPMode, setIsPIPMode] = useState(false);
 
-const [isScrubbing, setIsScrubbing] = useState(false);
-const [wasPaused, setWasPaused] = useState(false);
-const [previewImgNumber, setPreviewImgNumber] = useState(1);
-const [previewImgSrc, setPreviewImgSrc] = useState("");
-const timelineContainerRef = useRef<HTMLDivElement | null>(null);
-const [currentTimeText, setCurrentTimeText] = useState("");
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const [wasPaused, setWasPaused] = useState(false);
+  const [previewImgNumber, setPreviewImgNumber] = useState(1);
+  const [previewImgSrc, setPreviewImgSrc] = useState("");
+  const timelineContainerRef = useRef<HTMLDivElement | null>(null);
+  const [currentTimeText, setCurrentTimeText] = useState("");
 
 const leadingZeroFormatter = new Intl.NumberFormat(undefined, {
     minimumIntegerDigits: 2,
@@ -43,7 +43,27 @@ function formatDuration(time: number) {
         )}:${leadingZeroFormatter.format(seconds)}`
     }
   }
-  
+const getDescription = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+
+    const response = axios.get('http://localhost:3001/api/misc/video-details', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'filename': videoPath
+    }
+  }).then((response) => {
+    setVideo(response.data.video);
+  });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+useEffect(() => {
+  getDescription();
+}, []);
 
 const handleTimelineUpdate = (e: MouseEvent) => {
     const rect = timelineContainerRef.current?.getBoundingClientRect();
@@ -93,7 +113,7 @@ useEffect(() => {
     const handleTimeUpdate = () => {
       if(video.duration){
         const percent = (video.currentTime / video.duration) * 100;
-        setProgress(percent);
+
         console.log(timelineContainerRef)
         timelineContainerRef.current?.style.setProperty("--progress-position", `${percent}%`);
 
@@ -214,6 +234,15 @@ useEffect(() => {
           <video src={src} ref={videoRef} className="video" onClick={handlePlayPause}></video>
 
           </div>
+        {/* Details */}
+        <div className="video-container" style={{marginTop: "40px", marginLeft: "6%"}}>
+          Title: {video.title}
+        </div>
+
+        <div className="video-container" style={{marginTop: "20px",  marginLeft: "5.2%"}}>
+        Description: {video?.description}
+        </div>
+
           <div className="edit-button-container">
             <button>
               <div>
@@ -223,6 +252,7 @@ useEffect(() => {
               </div>
             </button>
           </div>
+
     </div>
     );
     
