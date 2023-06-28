@@ -40,7 +40,7 @@ Starten des Nodejs server:
 2. (npm install)
 3. npx jest
 
-4. Starten des react server:
+Starten des react server:
 1. Navigieren in server folder.
 2. (npm install)
 3. npx jest
