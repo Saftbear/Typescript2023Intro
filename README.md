@@ -30,7 +30,7 @@ Starten des React server:
 
 Link: http://localhost:3000
 
-Wenn ein Nutzer eingeloggt sein sollte, müsse sich ausgeloggt werden. 
+Wenn der Nutzer bei direkt nach initialisieren des Projektes/neustarten des Projektes eingeloggt sein sollte, müsste man sich ausloggen.
 Es kann ein Nutzer in Register erstellt werden. Dann muss sich in Login eingeloggt werden. Es können Videos angesehen werden, wenn der nutzer eingeloggt ist, aber diese können nicht bearbeitet werden ohne sich einzuloggen.
 Es können Videos editiert werden, Thumbnails hochgeladen werden oder die vorgefertigten genutzt werden. 
 
