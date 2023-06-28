@@ -19,8 +19,9 @@ const CreatePlaylist: React.FC = () => {
     const onFinish = async (values: any) => {
       try {
         await schema.validate(values, { abortEarly: false });
-        await auth.createPlaylist(values.playlistName, values.isPrivate);
-  
+        await auth.createPlaylist(values.playlistName);
+        alert('Playlist created!');
+
       } catch (error) {
         if (error instanceof yup.ValidationError) {
           error.inner.forEach((err) => {
@@ -67,9 +68,7 @@ const CreatePlaylist: React.FC = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item name="isPrivate" valuePropName="checked">
-          <Checkbox>Set Video as Private</Checkbox>
-        </Form.Item>
+
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Create Playlist

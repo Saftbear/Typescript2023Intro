@@ -51,33 +51,37 @@ const Playlists: React.FC = () => {
   return (
 <div>
   <Helmet>
-  <title>Platlists</title>  </Helmet>
+  <title>Playlists</title>  </Helmet>
 
-<div className="site-card-wrapper" style={{ overflowX: 'hidden', overflowY: 'hidden', marginTop: "20px", marginLeft: "20px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    {[...Array(Math.ceil(currentVideos.length / 4))].map((_, rowIndex) => (
-        <Row gutter={8} key={rowIndex} justify="center">
-            {currentVideos.slice(rowIndex * 4, (rowIndex + 1) * 4).map(playlist => (
-            <Link to={`/playlists/${playlist.id}`}>
-                <Col span={6} key={playlist.id} style={{ width: 400 }}>
-                    <Card>
+  <div className="site-card-wrapper" style={{ 
+    overflowX: 'hidden', 
+    overflowY: 'hidden', 
+    marginTop: "20px", 
+    marginLeft: "20px", 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+    gridGap: '20px', 
+}}>
 
-                        <Meta
-                       title={
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span style={{ fontSize: '14px' }}>{playlist.name}</span>
-                          <Link to={`/playlistedit/${playlist.id}`}>
-                            <EditOutlined key="edit" />
-                          </Link>
-                        </div>}
-                        
-                        description={<span style={{ fontSize: '12px' }}>{`Uploaded by: ${playlist.user.username}`}</span>}
-                        />
-                    </Card>
-                </Col>
-                </Link>
-            ))}
-        </Row>
+    {currentVideos.map((playlist, index) => (
+        <Link to={`/playlists/${playlist.id}`} key={playlist.id}>
+            <div>
+                <Card>
+
+                    <Meta
+                   title={
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '14px' }}>{playlist.name}</span>
+         
+                    </div>}
+                    
+                    description={<span style={{ fontSize: '12px' }}>{`Uploaded by: ${playlist.user.username}`}</span>}
+                    />
+                </Card>
+            </div>
+        </Link>
     ))}
+
 </div>
 </div>
 );

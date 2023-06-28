@@ -1,13 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-// This assumes you have a User entity and you're using TypeORM
 import { User } from '../../database'; 
 import { AppDataSource } from "../../database/data-source";
 
 
   
-// Use the same secret you used when signing your JWTs
 const secretKey:string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhc2QiLCJpYXQiOjE2ODU3ODIwMzEsImV4cCI6MTY4NTc4NTYzMX0.nRj5bePMkZOdsos4YMPfJ0J_GWiRNtH5QE3CVcG9LMY"; // should not be in here.
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {

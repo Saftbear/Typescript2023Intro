@@ -51,8 +51,8 @@ const VideoEdit: React.FC = () => {
 
 
               setVideoDetails(response.data);
-              setIsLoading(false); // set loading state to false after data is fetched
-              console.log(response.data)
+              setIsLoading(false); 
+              console.log(response.data.playlists)
           } catch (error) {
               console.log(error);
           }
@@ -218,7 +218,9 @@ const VideoEdit: React.FC = () => {
       initialValues={{
         title: videoDetails.title,
         description: videoDetails.description,
-        // If the 'playlist' field expects an array of playlist IDs, you would map the playlist array to get the IDs.
+        
+        playlist: videoDetails.playlists ? videoDetails.playlists.map((playlist: any) => playlist.id) : [],
+
       }}
     >
 

@@ -102,6 +102,33 @@ describe("POST /api/auth/login", () => {
     expect(res.body.success).toEqual(false);
     expect(res.body.message).toEqual("Invalid Username or Password");
   });
+
+  it("should respond with 400 when username is not provided", async () => {
+    const loginData = {
+      password: 'test', // Provide only password, no username
+    };
+  
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send(loginData);
+  
+    expect(res.status).toEqual(400);
+    expect(res.body.message).toEqual("No username provided");
+  });
+  
+  it("should respond with 400 when password is not provided", async () => {
+    const loginData = {
+      username: 'test', // Provide only username, no password
+    };
+  
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send(loginData);
+  
+    expect(res.status).toEqual(400);
+    expect(res.body.message).toEqual("No password provided");
+  });
+
   
   it("should respond with 500 when there is an error finding the user", async () => {
     // Mock findOne to throw an error

@@ -1,23 +1,23 @@
-import { Video } from '../../database/entity/Video';
+import { User, Video } from '../../database/index';
 import { AppDataSource } from "../../database/data-source";
-import { Request, Response, NextFunction } from "express"
-import { upload, upload_thumbnails } from "../utils";
-import Misc from "../utils/create_misc";
-import { User, Playlist } from '../../database';
+import { Request, Response, NextFunction, RequestHandler } from "express"
+import Misc from "../Services/createAdditional";
+import { Playlist } from '../../database';
 import fs from "fs"
 import path from 'path';
 import fsExtra from 'fs-extra';
+import { MulterRequest, CreateVideoBody } from '../types/Requests';
 
 
-export const videoDetails = async function(req: Request, res: Response) {
-try{
+export const videoDetails: RequestHandler = async (req: Request, res: Response) => {
+  try{
   const videoPath = req.headers.path;
 
   if (typeof videoPath !== 'string') {
     return res.status(400).json({ message: "Invalid path" });
   }
 
-    const video = await AppDataSource.manager.findOne(Video, { where: { path: videoPath }, relations: ["user"] });
+  const video = await AppDataSource.manager.findOne(Video, { where: { path: videoPath }, relations: ["user", "playlists"] });
     
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
@@ -30,10 +30,14 @@ try{
   }
 }
 
-export const deleteVideo = async function(req: Request, res: Response) {
+export const deleteVideo: RequestHandler<{ path: string }> = async (req: Request, res: Response) => {
   try {
     const videoPath = req.body.path;
+    if(!videoPath){
+      return res.status(400).json({ message: "videoPath not provided." });
 
+
+    }
     // Find the video by path
     const video = await AppDataSource.manager.findOne(Video, { where: { path: videoPath } });
 
@@ -90,12 +94,16 @@ export const deleteVideo = async function(req: Request, res: Response) {
     return res.status(500).json({ message: "Error deleting video", error: error });
 }
 }
-export const createVideo = async function(req: Request, res: Response, next: NextFunction) {
+export const createVideo: RequestHandler = async (req: Request<{}, {}, CreateVideoBody>, res: Response, next: NextFunction) => {
   try {
       const { title, description, thumbnail, playlist } = req.body;
       const user = req.user; 
+      if(!title || !description || !thumbnail){
+        return res.status(400).json({ error: 'Error when getting details.' });
+      }
+
       if(!user){
-          return res.status(401).json({ error: 'Unauthorized' });
+          return res.status(401).json({ error: 'Unauthorized' }); // redundant 
       } 
 
       const filename = req.headers.filename;
@@ -121,30 +129,37 @@ export const createVideo = async function(req: Request, res: Response, next: Nex
       video.user = user;
       const result = await AppDataSource.manager.save(video);
 
-      return res.status(200).send({message: "There were no errors found."});
-  } catch (error) {
+      return res.status(200).json({message: "There were no errors found."});
+    } catch (error) {
       return res.status(500).json({ error: 'An error occurred while creating the video' });
   }
 }
 
 
-export const checkThumbnails = async (req: Request, res: Response) => {
-  const { fileName } = req.params;
-  const thumbnailsFolder = `uploaded_files/Thumbnails/${fileName}/`;
+export const checkThumbnails: RequestHandler<{ fileName: string }> = async (req: Request, res: Response) => {
+
   try {
+    const filename: string = req.params.fileName;
+    if (!filename){
+      return res.status(400).send('filename not provided.');
+    }
+    const thumbnailsFolder = `uploaded_files/Thumbnails/${filename}/`;
+
     const files = await fs.promises.readdir(thumbnailsFolder);
-    res.status(200).json({ thumbnails: files });
+    return res.status(200).json({ thumbnails: files });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error' });
   }
 };
 
-export const uploadThumbnail = async (req: Request, res: Response) => {
-  if (req.fileValidationError) {
-    return res.status(400).send(req.fileValidationError);
+export const uploadThumbnail: RequestHandler = async (req: Request, res: Response) => {
+  const multerReq = req as MulterRequest;
+
+  if (multerReq.fileValidationError) {
+    return res.status(400).send(multerReq.fileValidationError);
   }
 
-  const file= req.file;
+  const file= multerReq.file;
 
   try {
     if (!file) {
@@ -158,13 +173,15 @@ export const uploadThumbnail = async (req: Request, res: Response) => {
   }
 };
 
-export const submitForm = async (req: Request, res: Response) => {
+export const submitForm: RequestHandler<any> = async (req: Request, res: Response) => {
   try {
-    const file = req.file;
+    const multerReq = req as MulterRequest;
+
+    const file = multerReq.file;
     if (!file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    if (!req.user) {
+    if (!multerReq.user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -189,7 +206,7 @@ export const submitForm = async (req: Request, res: Response) => {
     video.duration = duration;
     video.path = filename;
     video.thumbnail = `${filename.split('.').slice(0, -1).join('.')}/screenshot_0.png`;
-    video.user = req.user;
+    video.user = multerReq.user;
 
     await AppDataSource.manager.save(video);
 

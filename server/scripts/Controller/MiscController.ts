@@ -1,14 +1,22 @@
-import { Request, Response } from "express"
-import Misc from "../utils/create_misc";
+import { Request, Response, RequestHandler } from "express"
+import Misc from "../Services/createAdditional";
 import { Video } from "../../database";
 import { AppDataSource } from "../../database/data-source";
 import { VideoResponse } from "../types/Response";
 
-
-export const createMisc = async (req: Request, res: Response) => {
-  const { path, filename } = req.body;
+export const createMisc: RequestHandler = async (req: Request, res: Response) => {
 
   try {
+    const { path, filename } = req.body;
+
+    if (!path) {
+      return res.status(400).json({ message: "Invalid path" });
+    }
+  
+    if (!filename) {
+      return res.status(400).json({ message: "Invalid filename" });
+    }
+
     const misc = new Misc(path, filename);
     await misc.create_preview();
     await misc.createShortVideo();
@@ -36,7 +44,7 @@ export const createMisc = async (req: Request, res: Response) => {
 
 
 
-export const getVideos = async (req: Request, res: Response) => {
+export const getVideos: RequestHandler = async (req: Request, res: Response) => {
   try {
     const videos: Video[] = await AppDataSource.manager.find(Video, {
       select: ["id", "title", "thumbnail", "path"], // We only select the required fields
@@ -61,16 +69,19 @@ export const getVideos = async (req: Request, res: Response) => {
   }
 };
 
-export const getVideoDetails = async (req: Request, res: Response) => {
+export const getVideoDetails: RequestHandler = async (req: Request, res: Response) => {
 try {
-  const  filename = req.headers.filename;
-  console.log(filename)
+  const filename = req.headers.filename;
+
+  if (!filename) {
+    return res.status(400).json({ error: 'No filename provided' });
+  }
+
   const video = await AppDataSource.manager.findOne(Video, { where: { path: filename as string} }) as Video;
 
   if (!video) {
     return res.status(404).json({ error: 'Video not found' });
 }
-  console.log(video)
   return res.status(200).json({response: "ok", video: video});
 } catch (error) {
   return res.status(500).json({ error: 'An error occurred while fetching video Details' });

@@ -1,8 +1,11 @@
-import { Request, Response } from "express"
+import { Request, Response, RequestHandler } from "express"
 import { AppDataSource } from "../../database/data-source";
-import { Playlist, User, Video } from "../../database";
+import { Playlist, User } from "../../database";
 import { VideoResponse } from "../types/Response";
-export const getPlaylists = async (req: Request, res: Response) => {
+import { CreatePlaylistRequestBody } from "../types/Requests";
+
+
+export const getPlaylists: RequestHandler = async (req: Request, res: Response) => {
   try {
     const playlists = await AppDataSource.manager.find(Playlist, {
       relations: ["videos", "user"]
@@ -14,11 +17,15 @@ export const getPlaylists = async (req: Request, res: Response) => {
     res.status(500).send(error);
   }
 };
-export const getVideosInPlaylist = async (req: Request, res: Response) => {
-  try {
-    const playlistId = Number(req.headers.playlistid);  // Adjusted from req.headers to req.params assuming the playlist id is a URL parameter
 
-    // Fetch the Playlist and its associated videos
+export const getVideosInPlaylist: RequestHandler<{ playlistid: string }> = async (req: Request, res: Response) => {
+  try {
+    const playlistId: number = Number(req.headers.playlistid);
+
+    if(Number.isNaN(playlistId)){
+      return res.status(400).json({ message: "Invalid Playlist ID" });
+    }
+    
     const playlist = await AppDataSource.manager.findOne(Playlist, { where: { id: playlistId }, relations: ["videos", "videos.user"] });
 
     if (!playlist) {
@@ -27,8 +34,6 @@ export const getVideosInPlaylist = async (req: Request, res: Response) => {
 
     const videos = playlist.videos;
 
-    // Fetch the User associated with each Video
-
     const response: VideoResponse[] = videos.map(video => ({
       id: video.id,
       title: video.title,
@@ -36,7 +41,7 @@ export const getVideosInPlaylist = async (req: Request, res: Response) => {
       path: video.path,
       user: video.user.username,
     }));
-    console.log(response)
+
     res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching playlists:', error);
@@ -44,40 +49,36 @@ export const getVideosInPlaylist = async (req: Request, res: Response) => {
   }
 };
 
-
-
-export const createPlaylists = async (req: Request, res: Response) => {
-
+export const createPlaylists: RequestHandler = async (req: Request<{}, {}, CreatePlaylistRequestBody>, res: Response) => {
   try {
     const { playlistName } = req.body;
-    const userId = Number(req.headers.userid);
-  
-  
+    
+    if(!playlistName){
+      return res.status(400).json({ message: "Invalid playlistName" });
+    }
 
-    // Fetch the user
+    const userId = Number(req.headers.userid);
+    if(Number.isNaN(userId)){
+      return res.status(400).json({ message: "Invalid User ID" });
+    }
     const user = await AppDataSource.manager.findOne(User, { where: { id: userId } }) as User;
-    console.log(user)
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Create a new Playlist instance
     const playlist = new Playlist();
     playlist.name = playlistName;
     playlist.user = user;
-    playlist.videos = []; // initially, no videos in the playlist
+    playlist.videos = [];
 
-    // Save the playlist in the database
     await AppDataSource.manager.save(playlist);
 
-    // Return success response
     res.status(200).json({ success: true, message: 'Playlist successfully created!' });
   } catch (error) {
     const err = error as any;
     if (err.code === 'SQLITE_CONSTRAINT') {
-        // The constraint that failed is mentioned in the error message after "user."
         let failedConstraint = err.message.split('playlist.')[1];
-        console.log(failedConstraint)
         if (failedConstraint == "name")
         {
           return res.status(400).json({ message: "Playlist with that name already exists", success: false });

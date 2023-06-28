@@ -1,4 +1,3 @@
-import { videoDetails } from './../Controller/VideoController';
 import express from 'express';
 import { MiscController } from '../Controller';
 

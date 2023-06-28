@@ -30,9 +30,8 @@ app.use('/uploaded_files', express.static('uploaded_files'));
 app.use('/api', mainRouter);
 
 
-// Initialize the database connection
+
 AppDataSource.initialize().then(async () => {
-  // Additional setup logic here...
 
   // Start the server
   app.listen(PORT, () => {

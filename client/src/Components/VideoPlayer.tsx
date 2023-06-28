@@ -7,13 +7,39 @@ import { MdPictureInPicture } from 'react-icons/md';
 import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import { Typography } from 'antd';
 import { Helmet } from "react-helmet";
+import { useAuth } from "./authContext";
+
+
+type User = {
+  email: string;
+  id: number;
+  password: string;
+  username: string;
+};
+
+type Video = {
+  title: string;
+  description: string;
+  path: string;
+  user: User;
+};
+
+type Params = {
+  videoPath: string;
+};
 
 const VideoPlayer: React.FC = () => {
-  const { videoPath } = useParams<{ videoPath: string }>();
+  const { videoPath } = useParams<Params>();
   const src = `http://localhost:3001/uploaded_files/uploads/${videoPath}`;
-  const [video, setVideo] = useState({ title: '', description: ''});
+
+  const [video, setVideo] = useState<Video>({ 
+    title: '', 
+    description: '', 
+    path: '', 
+    user: { email: '', id: 0, password: '', username: '' } 
+  });
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
@@ -27,6 +53,7 @@ const VideoPlayer: React.FC = () => {
   const [previewImgSrc, setPreviewImgSrc] = useState("");
   const timelineContainerRef = useRef<HTMLDivElement | null>(null);
   const [currentTimeText, setCurrentTimeText] = useState("");
+  const { user } = useAuth();
 
 const leadingZeroFormatter = new Intl.NumberFormat(undefined, {
     minimumIntegerDigits: 2,
@@ -48,13 +75,13 @@ const getDescription = async () => {
   try {
     const token = localStorage.getItem('authToken');
 
-    const response = axios.get('http://localhost:3001/api/misc/video-details', {
+    const response = axios.get('http://localhost:3001/api/video/get-video', {
     headers: {
       'Authorization': `Bearer ${token}`,
-      'filename': videoPath
+      'path': videoPath
     }
   }).then((response) => {
-    setVideo(response.data.video);
+    setVideo(response.data);
   });
 
   } catch (error) {
@@ -244,17 +271,14 @@ useEffect(() => {
         <div className="video-container" style={{marginTop: "20px",  marginLeft: "5.2%"}}>
         Description: {video?.description}
         </div>
-
-          <div className="edit-button-container">
-            <button>
-              <div>
-                <Link to={`/videoedit/${videoPath}`}>
-                  <EditOutlined key="edit" />    
-                </Link>
-              </div>
-            </button>
-          </div>
-
+      <div className="padding" 
+      >
+                  {video.user.username === user?.username && 
+                      <Link to={`/videoedit/${video.path}`}>
+                        <EditOutlined key="edit" />
+                      </Link>
+                    }
+      </div>
     </div>
     );
     

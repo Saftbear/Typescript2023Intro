@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { render, waitFor, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Homepage from '../Homepage';
-import { AuthProvider } from '../authContext'; // import the provider
+import { AuthProvider } from '../authContext';
 
 jest.mock('axios');
 
@@ -14,7 +14,7 @@ window.matchMedia = window.matchMedia || function() {
     };
 };
 
-test('renders content from api', async () => {
+it('renders content from api', async () => {
     const mockResponse: AxiosResponse = {
         data: [
           {
@@ -29,9 +29,9 @@ test('renders content from api', async () => {
         statusText: 'OK',
         config: { 
           url: '',
-          headers: {} as any, // Here
+          headers: {} as any, 
         },
-        headers: {} as any, // Here
+        headers: {} as any,
       };
       
 

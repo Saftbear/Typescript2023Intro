@@ -1,5 +1,3 @@
-
-// 
 interface RegisterRequestBody {
     username: string;
     password: string;

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Layout, Menu, Divider, Button } from 'antd';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined, LogoutOutlined , DownOutlined} from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useAuth } from './authContext';
 
-// At the top of your component
 const { Header, Content, Footer, Sider } = Layout;
 
 interface LayoutProps {
@@ -16,14 +14,18 @@ const LayoutAnt: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth(); // use the hook to get the user
   const isLoggedIn = !!user;
   const [ipAddress, setIpAddress] = useState<string>('');
+  
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  }
+  
+  const filteredVideos = currentVideos.filter(video => 
+    video.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
 
-    axios.get('https://api.ipify.org?format=json',).then((response) => {
-      setIpAddress(response.data.ip)
-    
-    });
-  }, []);
 
   
   return (
@@ -44,16 +46,14 @@ const LayoutAnt: React.FC<LayoutProps> = ({ children }) => {
             <Link to="/create-playlist">Create Playlist</Link>
           </Menu.Item>
           <Divider />
-          <Menu.Item key="4" style={{ marginTop: '20px' }}>Your current IP: </Menu.Item>
-          <Menu.Item key="5" style={{ marginTop: '-10px' }}>{ipAddress}</Menu.Item>
 
-          <Menu.Item key="8" >Add description </Menu.Item>
         </Menu>
       </Sider>
       <Layout style={{ padding: '0 24px 24px' }}>
 
       <Header className="site-layout-background" style={{ padding: 0, display: 'flex', justifyContent: 'flex-end', backgroundColor:"#ffffff", color:'black',  }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
+          
           {isLoggedIn ? (
             <>
               <Link to="/Upload">

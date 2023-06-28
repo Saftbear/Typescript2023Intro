@@ -1,4 +1,3 @@
-import { FfmpegWrapper } from "../utils/ffmpegWrapper";
 
 export type MiscType = {
     directoryExistsOrCreate: (path: string) => boolean;

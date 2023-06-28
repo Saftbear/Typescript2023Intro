@@ -55,74 +55,80 @@ const Homepage: React.FC = () => {
       Homepage
        </title>
       </Helmet>
-    <div className="site-card-wrapper" style={{ overflowX: 'hidden', overflowY: 'hidden', marginTop: "20px", marginLeft: "20px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        
-        {[...Array(Math.ceil(currentVideos.length / 4))].map((_, rowIndex) => (
-            <Row gutter={8} key={rowIndex} justify="center">
-                {currentVideos.slice(rowIndex * 4, (rowIndex + 1) * 4).map(video => (
-                    <Col span={6} key={video.id} style={{ width: 400 }}>
-                        <Card
-                            style={{ width: 350, marginTop: "15px", border: "none", height: "280px" }} 
-                            className="no-padding-card"
 
-                            cover={
-                                <Link to={`/video/${video.path}`}>
-                                  <div style={{ width: '100%', height: '190px', position: 'relative' }}>
-                                  {hoveredVideo === video.id ? (
-                                      <video 
-                                      src={`http://localhost:3001/uploaded_files/ShortVideos/${video.path.split('.').slice(0, -1).join('.')}/output.mp4`} 
-                                      autoPlay
-                                      loop
-                                      style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute', borderRadius:"6px" }}
-                                      onMouseLeave={() => {
-                                          if (timerId) {
-                                          clearTimeout(timerId);
-                                          }
-                                          setHoveredVideo(null);
-                                      }}
-                                      />
-                                  ) : (
-                                      <img
-                                      className="video-thumbnail"
-                                      alt={video.title}
-                                      style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute',  borderRadius:"6px" }}
-                                      src={`http://localhost:3001/uploaded_files/Thumbnails/${video.thumbnail}`}
-                                      onMouseEnter={() => {
-                                        const timer = setTimeout(() => {
-                                          setHoveredVideo(video.id);
-                                        }, 50);
-                                        setTimerId(timer);
-                                      }}
-                                      />
-                                  )}
-                               
-                                  </div>
-                                </Link>
-                                }           
-              
-                        >
-                            <Meta
-    
+      <div className="site-card-wrapper" style={{ 
+    overflowX: 'hidden', 
+    overflowY: 'hidden', 
+    marginTop: "20px", 
+    marginLeft: "20px", 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+    gridGap: '20px', 
+}}>
 
-                title={
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span className="video-title" style={{ fontSize: '14px' }}>{video.title}</span>
-                    {video.user === user?.username && 
-                      <Link to={`/videoedit/${video.path}`}>
-                        <EditOutlined key="edit" />
-                      </Link>
-                    }
-                  </div>
+    {currentVideos.map((video, index) => (
+        <div key={video.id}>
+            <Card
+                style={{ width: '100%', marginTop: "15px", border: "none", height: "280px" }} 
+                className="no-padding-card"
+
+                cover={
+                    <Link to={`/video/${video.path}`}>
+                    <div style={{ width: '100%', height: '190px', position: 'relative' }}>
+                    {hoveredVideo === video.id ? (
+                        <video 
+                        src={`http://localhost:3001/uploaded_files/ShortVideos/${video.path.split('.').slice(0, -1).join('.')}/output.mp4`} 
+                        autoPlay
+                        loop
+                        style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute', borderRadius:"6px" }}
+                        onMouseLeave={() => {
+                            if (timerId) {
+                            clearTimeout(timerId);
+                            }
+                            setHoveredVideo(null);
+                        }}
+                        />
+                    ) : (
+                        <img
+                        className="video-thumbnail"
+                        alt={video.title}
+                        style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute',  borderRadius:"6px" }}
+                        src={`http://localhost:3001/uploaded_files/Thumbnails/${video.thumbnail}`}
+                        onMouseEnter={() => {
+                            const timer = setTimeout(() => {
+                            setHoveredVideo(video.id);
+                            }, 50);
+                            setTimerId(timer);
+                        }}
+                        />
+                    )}
+                
+                    </div>
+                    </Link>
+                    }           
+          
+            >
+                <Meta
+
+            title={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="video-title" style={{ fontSize: '14px' }}>{video.title}</span>
+                {video.user === user?.username && 
+                <Link to={`/videoedit/${video.path}`}>
+                    <EditOutlined key="edit" />
+                </Link>
                 }
-                description={<span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
-                />
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-        ))}
-    </div>
-  </div>
+            </div>
+            }
+            description={<span className="video-user" style={{ fontSize: '12px' }}>{`Uploaded by: ${video.user}`}</span>}
+            />
+            </Card>
+        </div>
+    ))}
+
+</div>
+</div>
+
 );
 
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import * as yup from 'yup';
 import { useNavigate   } from 'react-router-dom';
 import { useAuth } from './authContext';
 import { Helmet } from 'react-helmet';
@@ -11,10 +10,7 @@ interface LoginRequestBody {
     password: string;
 }
 
-const schema = yup.object().shape({
-    username: yup.string().required(),
-    password: yup.string().required()
-});
+
 
 const Login: React.FC = () => {
     const [formData, setFormData] = useState<LoginRequestBody>({ username: '', password: '' });

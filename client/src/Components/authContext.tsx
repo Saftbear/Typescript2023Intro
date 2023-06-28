@@ -20,7 +20,7 @@ interface AuthContextInterface {
     register: (username: string, password: string, email: string) => Promise<void>;
     logout: () => void;
     loadingUser: boolean;
-    createPlaylist: (playlistName: string, isPrivate: boolean) => Promise<void>;
+    createPlaylist: (playlistName: string) => Promise<void>;
 
 }
 
@@ -39,13 +39,13 @@ export const AuthProvider: React.FC<AuthProps> = ({ children }: AuthProps) => {
         setLoadingUser(false);
     }, []);
  
-    const createPlaylist = async (playlistName: string, isPrivate: boolean) => {
+    const createPlaylist = async (playlistName: string) => {
         if (!user) return
         const userId = user.id;
 
 
         const response = await axios.post('http://localhost:3001/api/playlists/create',
-        { playlistName, isPrivate },
+        { playlistName },
         { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}`, userId: userId } }
         )
     

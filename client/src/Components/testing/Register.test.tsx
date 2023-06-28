@@ -48,7 +48,7 @@ describe("Register", () => {
     });
   
 
-  test("should submit form successfully", async () => {
+  it("should submit form successfully", async () => {
     const { getByLabelText, getByRole } = render(
       <Router>
         <Register />
@@ -85,7 +85,7 @@ describe("Register", () => {
     });
 
     
-    test("should handle error when register returns status 400", async () => {
+    it("should handle error when register returns status 400", async () => {
 
         (useAuth as jest.Mock).mockReturnValue({
             register: jest.fn().mockImplementationOnce(() => {
@@ -137,7 +137,7 @@ describe("Register", () => {
           expect(getByText('Username already exists.')).toBeInTheDocument();
         });  
       });
-      test("should handle error when register returns status 500", async () => {
+      it("should handle error when register returns status 500", async () => {
 
         (useAuth as jest.Mock).mockReturnValue({
             register: jest.fn().mockImplementationOnce(() => {
@@ -189,7 +189,7 @@ describe("Register", () => {
           expect(getByText('Server error')).toBeInTheDocument();
         });  
     });  
-    test("should handle password length detection", async () => {
+    it("should handle password length detection", async () => {
         // Render the component
         const {getByLabelText, getByRole ,getByText } = render(
             <Router>
