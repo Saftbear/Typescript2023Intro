@@ -71,7 +71,7 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
       if (secretKey == undefined){
         return
       }
-      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '5h' });
+      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
       return res.json({ message: "User logged in successfully", token:token, user: user, success: true  });
     } else {
       return res.status(401).json({ message: "Invalid Username or Password", success: false });
