@@ -14,16 +14,9 @@ const LayoutAnt: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth(); // use the hook to get the user
   const isLoggedIn = !!user;
   const [ipAddress, setIpAddress] = useState<string>('');
-  
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  }
-  
-  const filteredVideos = currentVideos.filter(video => 
-    video.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+ 
   
 
 

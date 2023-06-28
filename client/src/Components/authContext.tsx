@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios,  {AxiosError, AxiosResponse} from 'axios';
+
 import { useNavigate } from 'react-router-dom';
 import { response } from 'express';
 
@@ -38,7 +39,25 @@ export const AuthProvider: React.FC<AuthProps> = ({ children }: AuthProps) => {
         }
         setLoadingUser(false);
     }, []);
- 
+    useEffect(() => {
+        axios.interceptors.response.use(function (response: AxiosResponse) {
+            // If the request succeeds, we don't have to do anything and just return the response
+            return response;
+          }, function (error: AxiosError) {
+            // Any status codes that falls outside the range of 2xx cause this function to trigger
+            // If you get a 401 (Unauthorized), which would be returned if the token is expired, log the user out
+            if (error.response && error.response.status === 401) {
+                logout();
+            }
+            return Promise.reject(error);
+          });
+
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+        setLoadingUser(false);
+    }, []); // empty dependency array means this effect runs once on mount
     const createPlaylist = async (playlistName: string) => {
         if (!user) return
         const userId = user.id;
