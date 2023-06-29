@@ -32,7 +32,6 @@ export class FfmpegWrapper implements IFfmpegWrapper{
           .output(`${outputPath}/preview-0%d.jpg`)
           .outputOptions(`-vf fps=${fps},scale=400:400`)
           .on('end', () => {
-              console.log('Preview captured successfully');
               resolve();
           })
           .on('error', (err) => {

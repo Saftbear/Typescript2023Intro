@@ -65,7 +65,7 @@ const VideoEdit: React.FC = () => {
     const probs_thumbnail: UploadProps = {
         name: 'file',
         multiple: false,
-        action: 'http://localhost:3001/api/video/upload-thumbnail',
+        action: 'http://localhost:3001/api/misc/upload-thumbnail',
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('authToken'),
           fileName: fileName!,
@@ -122,7 +122,7 @@ const VideoEdit: React.FC = () => {
         const checkThumbnails = async () => {
           if (fileName) {
             try {
-              const response = await axios.get(`http://localhost:3001/api/video/check-thumbnails/${fileName}`);
+              const response = await axios.get(`http://localhost:3001/api/misc/check-thumbnails/${fileName}`);
               if (response.data.thumbnails && response.data.thumbnails.length > 0) {
     
                 console.log(thumbnails)
@@ -259,7 +259,7 @@ const VideoEdit: React.FC = () => {
             style={{ width: '200px', margin: '10px', }} // set width auto
             cover={
               <img
-                src={`http://localhost:3001/uploaded_files/thumbnails/${thumbnail}`}
+                src={`http://localhost:3001/uploaded_files/Thumbnails/${thumbnail}`}
                 alt={`Thumbnail ${index + 1}`}
               />
             }

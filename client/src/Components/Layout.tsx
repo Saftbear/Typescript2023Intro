@@ -13,12 +13,8 @@ interface LayoutProps {
 const LayoutAnt: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth(); // use the hook to get the user
   const isLoggedIn = !!user;
-  const [ipAddress, setIpAddress] = useState<string>('');
 
-
- 
   
-
 
   
   return (

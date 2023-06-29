@@ -9,7 +9,7 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
 export const generateDestination = async function (req: Request, file: Express.Multer.File, cb: DestinationCallback) {
     const id: string = req.headers.filename as string;
 
-    const dir = `uploaded_files/thumbnails/${id}/`;
+    const dir = `uploaded_files/Thumbnails/${id}/`;
 
     try {
         await fs.promises.mkdir(dir, { recursive: true });
@@ -26,7 +26,7 @@ export const generateFilename = async function (req: Request, file: Express.Mult
     let name: string;
     do {
         name = `${makeid(16)}.${fileExt}`;
-    } while (await fs.promises.access(`uploaded_files/thumbnails/${id}/${name}`).then(() => true, () => false));
+    } while (await fs.promises.access(`uploaded_files/Thumbnails/${id}/${name}`).then(() => true, () => false));
     
     cb(null, name)
 };

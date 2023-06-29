@@ -7,7 +7,7 @@ Installieren auf Linux:
 2. sudo apt-get install ffmpeg
 3. verify: ffmpeg -version
 
-(Ich habe leider keinen Linux Rechner und kann dies nicht auszuprobieren.)
+(Ich habe es mit einer Ubunut VM ausprobiert und es musste nichts weiter gemacht werden)
 Source: https://www.geeksforgeeks.org/how-to-install-ffmpeg-in-linux/
 Source1, andere Linux Systeme und Windows: https://www.hostinger.com/tutorials/how-to-install-ffmpeg
 
@@ -29,6 +29,8 @@ Starten des React server:
 3. npm start
 
 Link: http://localhost:3000
+
+Hinweis: Beide Server müssen gleichzeitig laufen. 
 
 Wenn der Nutzer bei direkt nach initialisieren des Projektes/neustarten des Projektes eingeloggt sein sollte, müsste man sich ausloggen.
 Es kann ein Nutzer in Register erstellt werden. Dann muss sich in Login eingeloggt werden. Es können Videos angesehen werden, wenn der nutzer eingeloggt ist, aber diese können nicht bearbeitet werden ohne sich einzuloggen.

@@ -1,218 +1,121 @@
-import { User, Video } from '../../database/index';
-import { AppDataSource } from "../../database/data-source";
+
 import { Request, Response, NextFunction, RequestHandler } from "express"
 import Misc from "../Services/createAdditional";
-import { Playlist } from '../../database';
-import fs from "fs"
-import path from 'path';
-import fsExtra from 'fs-extra';
+
 import { MulterRequest, CreateVideoBody } from '../types/Requests';
+import { VideoService } from '../Services/VideoService';
 
 
 export const videoDetails: RequestHandler = async (req: Request, res: Response) => {
-  try{
-  const videoPath = req.headers.path;
+  try {
 
-  if (typeof videoPath !== 'string') {
-    return res.status(400).json({ message: "Invalid path" });
-  }
+    const videoPath = req.headers.path;
 
-  const video = await AppDataSource.manager.findOne(Video, { where: { path: videoPath }, relations: ["user", "playlists"] });
-    
-    if (!video) {
-      return res.status(404).json({ message: "Video not found" });
+    if (typeof videoPath !== 'string') {
+      return res.status(400).json({ error: 'Invalid filename' });
     }
-    
-    res.status(200).json(video);
 
-  } catch(err){
-    res.status(500).json({ message: "Error fetching video details", error: err });
+    const video = await VideoService.getVideoByPath(videoPath);
+    res.status(200).json(video);
+  } catch (err) {
+    if ((err as Error).message === "Invalid path") {
+      res.status(400).json({ error: (err as Error).message });
+    } else if ((err as Error).message === "Video not found") {
+      res.status(404).json({ error: (err as Error).message });
+    } else {
+      return res.status(500).json({ error: (err as Error).message });
+    }
   }
 }
 
 export const deleteVideo: RequestHandler<{ path: string }> = async (req: Request, res: Response) => {
   try {
+
     const videoPath = req.body.path;
     if(!videoPath){
       return res.status(400).json({ message: "videoPath not provided." });
-
-
     }
-    // Find the video by path
-    const video = await AppDataSource.manager.findOne(Video, { where: { path: videoPath } });
-
-    if (!video) {
-        return res.status(404).json({ message: "Video not found" });
+    await VideoService.deleteVideo(videoPath);
+    return res.status(200).json({ message: "Successfully deleted video!" });
+  } catch (err) {
+    if ((err as Error).message === "Invalid path") {
+      res.status(400).json({ error: (err as Error).message });
+    } else if ((err as Error).message === "Video not found" || (err as Error).message === "Playlists not found") {
+      res.status(404).json({ error: (err as Error).message });
+    }else {
+      return res.status(500).json({ error: (err as Error).message });
     }
-
-    // Remove the video from all playlists
-    const playlists = await AppDataSource.manager.find(Playlist, { relations: ["videos"] });
-
-    for (const playlist of playlists) {
-        playlist.videos = playlist.videos.filter(video => video.path !== videoPath);
-        await AppDataSource.manager.save(playlist);
-    }
-
-    await AppDataSource.manager.remove(video);
-
-    try {
-    fs.unlink(path.join(__dirname, `../../uploaded_files/uploads/${videoPath}`), (err) => {
-        if (err) {
-            console.error("Error deleting video file:", err);
-            return res.status(500).json({ message: "Error deleting video file" });
-        }
-    })
-  }
-    catch(err) {
-      console.error("Error deleting video:", err);
-      return res.status(500).json({ message: "Error deleting thumbnail folder" });
   }
 
-    try {
-      console.log(`../../uploaded_files/Thumbnails/${videoPath.split('.').slice(0, -1).join('.')}`)
-      await fsExtra.remove(path.join(__dirname, `../../uploaded_files/Thumbnails/${videoPath.split('.').slice(0, -1).join('.')}`));
-  } catch(err) {
-      console.error("Error deleting thumbnail folder:", err);
-      return res.status(500).json({ message: "Error deleting thumbnail folder" });
-  }
-  try {
-    await fsExtra.remove(path.join(__dirname, `../../uploaded_files/Preview/${videoPath.split('.').slice(0, -1).join('.')}`));
-  } catch(err) {
-      console.error("Error deleting Preview folder:", err);
-      return res.status(500).json({ message: "Error deleting Preview folder" });
-  }
-  try {
-    await fsExtra.remove(path.join(__dirname, `../../uploaded_files/ShortVideos/${videoPath.split('.').slice(0, -1).join('.')}`));
-  } catch(err) {
-      console.error("Error deleting Preview folder:", err);
-      return res.status(500).json({ message: "Error deleting ShortVideos folder" });
-  }
-
-  return res.status(200).json({ message: "Successfully deleted video!" });
-
-} catch (error) {
-    return res.status(500).json({ message: "Error deleting video", error: error });
 }
-}
+
 export const createVideo: RequestHandler = async (req: Request<{}, {}, CreateVideoBody>, res: Response, next: NextFunction) => {
   try {
-      const { title, description, thumbnail, playlist } = req.body;
-      const user = req.user; 
-      if(!title || !description || !thumbnail){
-        return res.status(400).json({ error: 'Error when getting details.' });
-      }
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' }); 
+    }
+    const filename = req.headers.filename;
 
-      if(!user){
-          return res.status(401).json({ error: 'Unauthorized' }); // redundant 
-      } 
+    if (typeof filename !== 'string') {
+      return res.status(400).json({ error: 'Invalid filename' });
+    }
 
-      const filename = req.headers.filename;
-      if(!filename) {
-          return res.status(400).json({ error: 'No filename provided' });
-      }
+    const result = await VideoService.createVideo(user, filename, req.body);
 
-      const video = await AppDataSource.manager.findOne(Video, { where: { path: filename as string} }) as Video;
-      if (!video) {
-          return res.status(404).json({ error: 'Video not found' });
-      }
-     
-      if(playlist && playlist.length != 0) {
-          const playlists = await AppDataSource.manager.createQueryBuilder(Playlist, "playlist")
-          .where("playlist.id IN (:...ids)", { ids: playlist })
-          .getMany();
-          video.playlists = playlists;
-      }
-
-      video.title = title;
-      video.description = description;
-      video.thumbnail = thumbnail;
-      video.user = user;
-      const result = await AppDataSource.manager.save(video);
-
-      return res.status(200).json({message: "There were no errors found."});
-    } catch (error) {
-      return res.status(500).json({ error: 'An error occurred while creating the video' });
+    return res.status(200).json(result);
+  } catch (err) {
+    if ((err as Error).message === "Invalid path" || (err as Error).message === "Invalid filename") {
+      res.status(400).json({ error: (err as Error).message });
+    } else if ((err as Error).message === "Video not found" || (err as Error).message === "Playlists not found") {
+      res.status(404).json({ error: (err as Error).message });
+    }else {
+      return res.status(500).json({ error: (err as Error).message });
+    }
   }
 }
 
 
-export const checkThumbnails: RequestHandler<{ fileName: string }> = async (req: Request, res: Response) => {
-
-  try {
-    const filename: string = req.params.fileName;
-    if (!filename){
-      return res.status(400).send('filename not provided.');
-    }
-    const thumbnailsFolder = `uploaded_files/Thumbnails/${filename}/`;
-
-    const files = await fs.promises.readdir(thumbnailsFolder);
-    return res.status(200).json({ thumbnails: files });
-  } catch (err) {
-    return res.status(500).json({ error: 'Server error' });
-  }
-};
-
 export const uploadThumbnail: RequestHandler = async (req: Request, res: Response) => {
-  const multerReq = req as MulterRequest;
-
-  if (multerReq.fileValidationError) {
-    return res.status(400).send(multerReq.fileValidationError);
-  }
-
-  const file= multerReq.file;
-
   try {
-    if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    } else {
-      console.log(file.filename)
-      return res.status(200).json({ fileName: file.filename });
+
+    const multerReq = req as MulterRequest;
+    const file = multerReq.file;
+
+    const filename = await VideoService.uploadThumbnail(file);
+    return res.status(200).json({ fileName: filename });
+  } catch (err) {
+    if ((err as Error).message === "No file uploaded") {
+      res.status(400).json({ error: (err as Error).message });
+    } else{
+      return res.status(500).json({ error: (err as Error).message });
+      }
     }
-  } catch (error) {
-    return res.status(500).json({ error });
   }
-};
+
 
 export const submitForm: RequestHandler<any> = async (req: Request, res: Response) => {
   try {
+    
     const multerReq = req as MulterRequest;
-
     const file = multerReq.file;
-    if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+    if(!file){
+      return res.status(400).json({ message: "File not provided." });
     }
+
     if (!multerReq.user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const path: string = file.path;
-    const filename: string = file.filename;
-    const originalname: string = file.originalname;
-
-
-    const misc = new Misc(path, filename);
-    await misc.create_preview();
-    await misc.createShortVideo();
-    await misc.create_thumbnail();
-    let duration: number | null =  misc.getDuration();
-
-    if (duration == null){
-      duration = 0;
+    const misc = new Misc(file.path, file.filename);
+    const result = await VideoService.submitForm(file, multerReq.user, misc);
+    return res.status(200).json(result);
+  } catch (err) {
+    if ((err as Error).message === "No file uploaded" || (err as Error).message === 'No filename or originalname') {
+      res.status(400).json({ error: (err as Error).message });
+    } else{
+      return res.status(500).json({ error: (err as Error).message });
+      }
     }
+}
 
-    const video: Video = new Video();
-    video.title = originalname;
-    video.description = "";
-    video.duration = duration;
-    video.path = filename;
-    video.thumbnail = `${filename.split('.').slice(0, -1).join('.')}/screenshot_0.png`;
-    video.user = multerReq.user;
-
-    await AppDataSource.manager.save(video);
-
-    return res.json({ fileName: filename, videoId: video.id });
-
-  } catch (error) {
-    return res.status(500).json({ error: 'An error occurred while submitting the form' });
-  }
-};

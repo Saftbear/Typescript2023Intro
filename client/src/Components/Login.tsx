@@ -24,10 +24,11 @@ const Login: React.FC = () => {
 
     const handleSubmit = async (values: { username: string; password: string }) => {
         try {
-            // login the user
-            await auth.login(values.username, values.password);
-
-            navigate("/homepage")
+          console.log('Submitting form with values: ', values);
+          await auth.login(values.username, values.password);
+          console.log('Login successful. Navigating to /homepage');
+          
+       
        
         } catch (error) {
             if (axios.isAxiosError(error)) {

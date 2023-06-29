@@ -1,19 +1,18 @@
-import { Request, Response, RequestHandler } from "express"
+import { Request, Response, RequestHandler, response } from "express"
 import { AppDataSource } from "../../database/data-source";
 import { Playlist, User } from "../../database";
 import { VideoResponse } from "../types/Response";
 import { CreatePlaylistRequestBody } from "../types/Requests";
+import { PlaylistService } from "../Services/PlaylistService";
 
 
 export const getPlaylists: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const playlists = await AppDataSource.manager.find(Playlist, {
-      relations: ["videos", "user"]
-    });
+    const playlists = await PlaylistService.getPlaylists();
+    console.log(playlists)
 
     res.status(200).json(playlists);
   } catch (error) {
-    console.error('Error fetching playlists:', error);
     res.status(500).send(error);
   }
 };
@@ -26,25 +25,13 @@ export const getVideosInPlaylist: RequestHandler<{ playlistid: string }> = async
       return res.status(400).json({ message: "Invalid Playlist ID" });
     }
     
-    const playlist = await AppDataSource.manager.findOne(Playlist, { where: { id: playlistId }, relations: ["videos", "videos.user"] });
-
-    if (!playlist) {
-      return res.status(404).json({ message: "Playlist not found" });
-    }
-
-    const videos = playlist.videos;
-
-    const response: VideoResponse[] = videos.map(video => ({
-      id: video.id,
-      title: video.title,
-      thumbnail: video.thumbnail,
-      path: video.path,
-      user: video.user.username,
-    }));
+    const response = await PlaylistService.getPlaylistById(playlistId);
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Error fetching playlists:', error);
+    if ((error as Error).message === "Playlist not found") {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
     res.status(500).send(error);
   }
 };

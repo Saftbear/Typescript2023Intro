@@ -11,8 +11,8 @@ export const UnauthenticatedRoute: React.FC<UnauthenticatedRouteProps> = ({ chil
   const navigate = useNavigate();
   useEffect(() => {
     if (!loadingUser && user) {
-      navigate('/'); 
-    }
+      navigate('/');
+      }
   }, [user, loadingUser, navigate]);
 
   if (loadingUser) return null; 
