@@ -1,6 +1,8 @@
 # Typescript2023Intro
 Mein Typescript projekt mit react frontend and nodejs backend. 
 
+Github Repo: https://github.com/Saftbear/Typescript2023Intro
+
 Es muss FFmpeg installiert sein, damit die Videos hochgeladen werden können. 
 Installieren auf Linux:
 1. sudo apt-get update

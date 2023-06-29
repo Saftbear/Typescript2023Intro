@@ -9,7 +9,9 @@ export const register: RequestHandler = async (req: Request, res: Response) => {
     if ((error as Error).message === 'Missing parameters') {
       return res.status(400).json({ message: "Username, password, and email are all required", success: false });
     }
-
+    if ((error as Error).message === 'Database error - user already exists') {
+      return res.status(400).json({ message: "Username already exists", success: false });
+    }
     return res.status(500).json({ message: "Server Error", success: false });
   }
 };

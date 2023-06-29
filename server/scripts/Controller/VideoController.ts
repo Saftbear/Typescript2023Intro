@@ -76,22 +76,7 @@ export const createVideo: RequestHandler = async (req: Request<{}, {}, CreateVid
 }
 
 
-export const uploadThumbnail: RequestHandler = async (req: Request, res: Response) => {
-  try {
 
-    const multerReq = req as MulterRequest;
-    const file = multerReq.file;
-
-    const filename = await VideoService.uploadThumbnail(file);
-    return res.status(200).json({ fileName: filename });
-  } catch (err) {
-    if ((err as Error).message === "No file uploaded") {
-      res.status(400).json({ error: (err as Error).message });
-    } else{
-      return res.status(500).json({ error: (err as Error).message });
-      }
-    }
-  }
 
 
 export const submitForm: RequestHandler<any> = async (req: Request, res: Response) => {

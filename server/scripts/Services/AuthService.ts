@@ -17,7 +17,11 @@ class AuthService {
     user.username = username;
     user.password = hashedPassword;
     user.email = email;
-    await AppDataSource.manager.save(user);
+    try{
+        await AppDataSource.manager.save(user);
+    }catch (err) {
+        throw new Error('Database error - user already exists');
+    }
     return user;
   }
 
@@ -46,7 +50,14 @@ class AuthService {
       return null;
     }
     const userId = decoded.id;
-    const user = await AppDataSource.manager.findOne(User, { where: { id: userId } }) as User;
+    let user: User 
+    try{
+        user = await AppDataSource.manager.findOne(User, { where: { id: userId } }) as User;
+
+    }catch(err){
+        throw new Error("User not found");
+    }
+
     return user;
   }
 }
