@@ -233,10 +233,10 @@ const VideoEdit: React.FC = () => {
     >
 
       <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-        <Input />
+        <Input maxLength={60} showCount />
       </Form.Item>
       <Form.Item label="Description" name="description" rules={[{ required: true }]}>
-        <Input.TextArea rows={5} />
+        <Input.TextArea rows={5} maxLength={200} showCount />
       </Form.Item>
       <Form.Item label="Playlist" name="playlist">
         <Select mode="multiple" placeholder="Select playlist">

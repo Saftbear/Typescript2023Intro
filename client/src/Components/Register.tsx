@@ -90,6 +90,7 @@ const Register: React.FC = () => {
             onFinish={onFinish}
           >
             <Form.Item
+          
               label="Username"
               name="username"
               rules={[{ required: true, message: 'Please input your username!' }]}
@@ -98,7 +99,7 @@ const Register: React.FC = () => {
                 validateStatus: 'error',
               })}
             >
-              <Input />
+              <Input maxLength={25}/>
             </Form.Item>
 
             <Form.Item
@@ -110,7 +111,7 @@ const Register: React.FC = () => {
                 validateStatus: 'error',
               })}
             >
-              <Input />
+              <Input maxLength={320}/>
             </Form.Item>
 
             <Form.Item
@@ -122,7 +123,7 @@ const Register: React.FC = () => {
                 validateStatus: 'error',
               })}
             >
-              <Input.Password />
+              <Input.Password maxLength={32}/>
             </Form.Item>
 
             <Form.Item
@@ -148,7 +149,7 @@ const Register: React.FC = () => {
                 validateStatus: 'error',
               })}
             >
-              <Input.Password />
+              <Input.Password maxLength={32}/>
             </Form.Item>
 
             <Form.Item {...tailLayout}>
