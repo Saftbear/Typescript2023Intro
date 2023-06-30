@@ -19,7 +19,7 @@ describe('Misc', () => {
     beforeEach(async () => {
     const clips: { [key: string]: string } = {};
         for (let i = 0; i < 15; i++) {
-            clips[`clip_${i}.mp4`] = 'dummy content'; // Or you can leave it as an empty string ''
+            clips[`clip_${i}.mp4`] = 'dummy content';
         }
     
 

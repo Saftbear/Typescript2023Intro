@@ -28,7 +28,7 @@ describe('VideoService', () => {
   const videoService: IVideoService = new VideoService();
 
   afterEach(() => {
-    jest.clearAllMocks(); // using clearAllMocks instead of resetAllMocks.
+    jest.clearAllMocks(); 
   });
 
   it('should create a video', async () => {

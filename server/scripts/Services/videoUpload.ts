@@ -66,4 +66,4 @@ function makeid(length: number): string {
 }
 
 
-export const upload = multer({ storage: storage, fileFilter: fileFilter }) //async?? This works really slow.
+export const upload = multer({ storage: storage, fileFilter: fileFilter }) 
