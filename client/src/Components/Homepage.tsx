@@ -117,7 +117,8 @@ const Homepage: React.FC = () => {
 
             title={
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className="video-title" style={{ fontSize: '14px' }}>{video.title}</span>
+                <span className="video-title" style={{ fontSize: '14px' }}>          {video.title.length > 26 ? video.title.substring(0, 26) + "..." : video.title}
+</span>
                 {video.user === user?.username && 
                 <Link to={`/videoedit/${video.path}`}>
                     <EditOutlined key="edit" />

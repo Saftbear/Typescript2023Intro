@@ -210,7 +210,7 @@ const VideoEdit: React.FC = () => {
 
   };
   if (isLoading) {
-    return <div>Loading...</div>; // or a loading spinner
+    return <div>Loading...</div>; 
   }
   return (
     <ProtectedRoute>
@@ -262,9 +262,9 @@ const VideoEdit: React.FC = () => {
         {thumbnails.map((thumbnail, index) => (
           <Card
             hoverable
-            bordered={false} // remove default border
-            bodyStyle={{ padding: 0 }} // remove default padding
-            style={{ width: '200px', margin: '10px', }} // set width auto
+            bordered={false} 
+            bodyStyle={{ padding: 0 }} 
+            style={{ width: '200px', margin: '10px', }} 
             cover={
               <img
                 src={`http://localhost:3001/uploaded_files/Thumbnails/${thumbnail}`}
