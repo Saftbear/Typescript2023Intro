@@ -190,7 +190,22 @@ export class VideoService implements IVideoService{
         if(!file.filename || !file.originalname){
             throw new Error('No filename or originalname');
         }
+        if (file.originalname.length > 60) {
+            let fileExtension = file.originalname.split('.').pop();  
+            if(fileExtension === undefined){
+                throw new Error('Interal Server Error');
+            }
 
+            let nameWithoutExtension = file.originalname.slice(0, file.originalname.length - fileExtension.length - 1);  
+            let maxLength = 60 - fileExtension.length - 1; 
+        
+            if (nameWithoutExtension.length > maxLength) {
+                nameWithoutExtension = nameWithoutExtension.slice(nameWithoutExtension.length - maxLength);
+            }
+        
+            // Combine shortened name with extension
+            file.originalname = `${nameWithoutExtension}.${fileExtension}`;
+        }
         const filename: string = file.filename;
         const originalname: string = file.originalname;
 
