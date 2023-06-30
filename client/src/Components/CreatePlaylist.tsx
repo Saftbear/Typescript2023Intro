@@ -66,7 +66,7 @@ const CreatePlaylist: React.FC = () => {
             },
           ]}
         >
-          <Input max={32} />
+          <Input maxLength={60} showCount />
         </Form.Item>
 
         <Form.Item>
