@@ -17,11 +17,15 @@ Source1, andere Linux Systeme und Windows: https://www.hostinger.com/tutorials/h
 Mac installation mit homebrew: 
 brew install ffmpeg
 
-
 Starten des Nodejs server:
 1. Navigieren in server folder.
 2. (npm install)
 3. npm start
+
+Bei start wird automatisch eine SQLite Datenbank erstellt. 
+(Wenn dies nicht passiert, habe ich eine Datenbank hochgeladen in server unter namen: myYoutube_red.sqlite. Diese bitte umbennen in myYoutube.sqlite.)
+
+
 
 Link: http://localhost:3001
 
